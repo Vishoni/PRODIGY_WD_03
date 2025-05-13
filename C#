@@ -1,0 +1,100 @@
+using System;
+
+class TicTacToe
+{
+    static string[] board = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+    static string currentPlayer = "X";
+    static bool gameActive = true;
+
+    static void Main(string[] args)
+    {
+        while (gameActive)
+        {
+            Console.Clear();
+            DisplayBoard();
+            Console.WriteLine($"{currentPlayer}'s turn");
+            int playerMove = GetPlayerMove();
+            MakeMove(playerMove);
+            if (CheckWin())
+            {
+                Console.Clear();
+                DisplayBoard();
+                Console.WriteLine($"{currentPlayer} wins!");
+                gameActive = false;
+            }
+            else if (IsBoardFull())
+            {
+                Console.Clear();
+                DisplayBoard();
+                Console.WriteLine("It's a draw!");
+                gameActive = false;
+            }
+            else
+            {
+                SwitchPlayer();
+            }
+        }
+
+        Console.WriteLine("Press any key to exit...");
+        Console.ReadKey();
+    }
+
+    static void DisplayBoard()
+    {
+        Console.WriteLine(" {0} | {1} | {2} ", board[0], board[1], board[2]);
+        Console.WriteLine("---|---|---");
+        Console.WriteLine(" {0} | {1} | {2} ", board[3], board[4], board[5]);
+        Console.WriteLine("---|---|---");
+        Console.WriteLine(" {0} | {1} | {2} ", board[6], board[7], board[8]);
+    }
+
+    static int GetPlayerMove()
+    {
+        int move;
+        while (true)
+        {
+            Console.WriteLine("Enter a number between 1 and 9: ");
+            if (int.TryParse(Console.ReadLine(), out move) && move >= 1 && move <= 9 && board[move - 1] != "X" && board[move - 1] != "O")
+                return move - 1;
+            else
+                Console.WriteLine("Invalid move. Try again.");
+        }
+    }
+
+    static void MakeMove(int move)
+    {
+        board[move] = currentPlayer;
+    }
+
+    static void SwitchPlayer()
+    {
+        currentPlayer = (currentPlayer == "X") ? "O" : "X";
+    }
+
+    static bool CheckWin()
+    {
+        int[,] winningCombinations = {
+            { 0, 1, 2 }, { 3, 4, 5 }, { 6, 7, 8 },  
+            { 0, 3, 6 }, { 1, 4, 7 }, { 2, 5, 8 },  
+            { 0, 4, 8 }, { 2, 4, 6 }               
+        };
+
+        foreach (var combo in winningCombinations)
+        {
+            if (board[combo[0]] == currentPlayer && board[combo[1]] == currentPlayer && board[combo[2]] == currentPlayer)
+                return true;
+        }
+
+        return false;
+    }
+
+    static bool IsBoardFull()
+    {
+        foreach (string cell in board)
+        {
+            if (cell != "X" && cell != "O")
+                return false;
+        }
+        return true;
+    }
+}
